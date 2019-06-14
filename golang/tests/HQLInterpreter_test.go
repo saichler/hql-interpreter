@@ -386,3 +386,87 @@ func TestMapSetValue(t *testing.T) {
 
 	}
 }
+
+func TestSliceSetValue(t *testing.T) {
+	r := &registry.OrmRegistry{}
+	r.Register(&tests.Node{}, nil)
+	schemaField := r.Schema().CreateAttributeID("node.SubNode2Slice[1].SliceInSlice[1].String")
+
+	if schemaField == nil {
+		t.Fail()
+		Error("Could not create schema field for node.SubNode2Slice[1].SliceInSlice[1].String")
+		return
+	}
+
+	expected := "MyValue"
+	node := &tests.Node{}
+	schemaField.SetValue(node, expected)
+
+	if node.SubNode2Slice == nil {
+		Error("SubNode2Slice list is nil")
+		t.Fail()
+		return
+	}
+
+	if len(node.SubNode2Slice) < 2 {
+		Error("Expected at least 2 SubNode2Slice instances.")
+		t.Fail()
+		return
+	}
+
+	ci := node.SubNode2Slice[1]
+	if ci == nil {
+		Error("SubNode2Slice 1 is nil")
+		t.Fail()
+		return
+	}
+
+	if ci.SliceInSlice == nil {
+		Error("SliceInSlice list is nil")
+		t.Fail()
+		return
+	}
+
+	if len(ci.SliceInSlice) < 2 {
+		Error("Expected SliceInSlice list to be at least 2")
+		t.Fail()
+		return
+	}
+
+	val := ci.SliceInSlice[1]
+
+	if val == nil {
+		Error("SliceInSlice 1 is nil")
+		t.Fail()
+		return
+	}
+
+	if val.String != expected {
+		Error("Expected String to be:" + expected)
+		t.Fail()
+		return
+	}
+
+	schemaField = r.Schema().CreateAttributeID("node.SubNode2Slice[1].SliceInSlice[2].String")
+	schemaField.SetValue(node, expected)
+
+	if len(ci.SliceInSlice) < 3 {
+		Error("Expected SliceInSlice list to be at least 3")
+		t.Fail()
+		return
+	}
+
+	val = ci.SliceInSlice[2]
+
+	if val == nil {
+		Error("Val 2 is nil")
+		t.Fail()
+		return
+	}
+
+	if val.String != expected {
+		Error("Expected val 2 String to be:" + expected)
+		t.Fail()
+		return
+	}
+}
