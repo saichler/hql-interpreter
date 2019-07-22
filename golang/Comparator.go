@@ -26,6 +26,12 @@ var comparables = make(map[hqlparser.ComparatorOperation]Comparable)
 func initComparables() {
 	if len(comparables) == 0 {
 		comparables[hqlparser.Equal] = comparators.NewEqual()
+		comparables[hqlparser.NotEqual] = comparators.NewNotEqual()
+		comparables[hqlparser.GreaterThan] = comparators.NewGreaterThan()
+		comparables[hqlparser.GreaterThanOrEqual] = comparators.NewGreaterThanOrEqual()
+		comparables[hqlparser.LessThan] = comparators.NewLessThan()
+		comparables[hqlparser.LessThanOrEqual] = comparators.NewLessThanOrEqual()
+		comparables[hqlparser.IN] = comparators.NewIN()
 	}
 }
 

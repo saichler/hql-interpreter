@@ -57,54 +57,26 @@ func eqStringMatcher(left, right reflect.Value) bool {
 }
 
 func eqIntMatcher(left, right reflect.Value) bool {
-	var aside int64
-	var zside int64
-	if left.Kind() != reflect.String {
-		aside = left.Int()
-	} else {
-		i, e := strconv.Atoi(left.String())
-		if e != nil {
-			return false
-		}
-		aside = int64(i)
+	aside, ok := getInt64(left)
+	if !ok {
+		return false
 	}
-
-	if right.Kind() != reflect.String {
-		aside = right.Int()
-	} else {
-		i, e := strconv.Atoi(right.String())
-		if e != nil {
-			return false
-		}
-		zside = int64(i)
+	zside, ok := getInt64(right)
+	if !ok {
+		return false
 	}
-
 	return aside == zside
 }
 
 func eqUintMatcher(left, right reflect.Value) bool {
-	var aside uint64
-	var zside uint64
-	if left.Kind() != reflect.String {
-		aside = left.Uint()
-	} else {
-		i, e := strconv.Atoi(left.String())
-		if e != nil {
-			return false
-		}
-		aside = uint64(i)
+	aside, ok := getUint64(left)
+	if !ok {
+		return false
 	}
-
-	if right.Kind() != reflect.String {
-		aside = right.Uint()
-	} else {
-		i, e := strconv.Atoi(right.String())
-		if e != nil {
-			return false
-		}
-		zside = uint64(i)
+	zside, ok := getUint64(right)
+	if !ok {
+		return false
 	}
-
 	return aside == zside
 }
 
@@ -123,4 +95,28 @@ func getKind(aside, zside []reflect.Value) reflect.Kind {
 		return zSideKind
 	}
 	return aSideKind
+}
+
+func getInt64(value reflect.Value) (int64, bool) {
+	if value.Kind() != reflect.String {
+		return value.Int(), true
+	} else {
+		i, e := strconv.Atoi(value.String())
+		if e != nil {
+			return 0, false
+		}
+		return int64(i), true
+	}
+}
+
+func getUint64(value reflect.Value) (uint64, bool) {
+	if value.Kind() != reflect.String {
+		return value.Uint(), true
+	} else {
+		i, e := strconv.Atoi(value.String())
+		if e != nil {
+			return 0, false
+		}
+		return uint64(i), true
+	}
 }
